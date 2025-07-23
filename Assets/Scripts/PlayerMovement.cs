@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : Code.Scripts.Managers.Singleton<PlayerMovement>
 {
@@ -45,6 +46,13 @@ public class PlayerMovement : Code.Scripts.Managers.Singleton<PlayerMovement>
         VectorZ = 0;
     }
 
+    void OnLevelWasLoaded(int level)
+    { 
+        rb =  GameObject.FindWithTag("Player").GetComponent<Rigidbody>();
+        playerCam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        fieldMeshPivot = GameObject.FindWithTag("Pivot");
+    }
+
     void FixedUpdate()
     {
         if (buttonDownUpDown)
@@ -61,7 +69,6 @@ public class PlayerMovement : Code.Scripts.Managers.Singleton<PlayerMovement>
 
         fakeGravity = new Vector3(VectorX, 0, VectorZ);
         
-
         rb.linearVelocity += fakeGravity * Time.fixedDeltaTime;
 
         //rotate the field mesh
@@ -70,5 +77,10 @@ public class PlayerMovement : Code.Scripts.Managers.Singleton<PlayerMovement>
         // Dampen towards the target rotation
         fieldMeshPivot.transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5f);
 
+    }
+
+    public Vector3 GetFakeGravity()
+    { 
+        return fakeGravity;
     }
 }
